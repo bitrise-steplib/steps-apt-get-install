@@ -36,7 +36,7 @@ inputs:
       description: |
         Flags to pass to the apt-get install/upgrade command.
 
-        `apt-get install/upgrade [options] [packages]`
+        `apt-get install/upgrade -y [options] [packages]`
       is_expand: true
       is_required: false
       value_options: []
@@ -45,9 +45,9 @@ inputs:
       title: "Upgrade packages if previously installed"
       summary: "Upgrade packages if previously installed"
       description: |
-        If set the step will upgrade the defined packages by calling `apt-get upgrade [options] [packages]` command.
+        If set the step will upgrade the defined packages by calling `apt-get upgrade -y [options] [packages]` command.
 
-        Otherwise the step calls `apt-get install [options] [packages]`
+        Otherwise the step calls `apt-get install -y [options] [packages]`
       is_expand: true
       is_required: false
       value_options:
