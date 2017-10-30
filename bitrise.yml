@@ -26,7 +26,7 @@ workflows:
         title: Step Test
         run_if: true
         inputs:
-        - packages: golang
+        - packages: nginx
         - options: "-V"
         - upgrade: "yes"
   # ----------------------------------------------------------------
