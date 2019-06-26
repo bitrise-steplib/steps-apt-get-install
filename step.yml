@@ -23,9 +23,9 @@ toolkit:
 inputs:
   - packages:
     opts:
-      title: "Name of the packages to install/upgrade"
-      summary: "Name of the packages to install/upgrade"
-      description: "Name of the packages to install/upgrade"
+      title: "Name of the packages to install/upgrade, separated with spaces"
+      summary: "Name of the packages to install/upgrade, separated with spaces"
+      description: "Name of the packages to install/upgrade, separated with spaces"
       is_expand: true
       is_required: true
       value_options: []
