@@ -3,19 +3,58 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/bitrise-io/go-utils"
-  packages = ["colorstring","command","errorutil","log","pathutil"]
-  revision = "961320f9011cedf55e1da0578949bf63450a96c0"
+  digest = "1:510cb6dddad542f24598cbb8dd8bc4dd0ff460284d459d118c9d475334e2a337"
+  name = "github.com/bitrise-io/go-steputils"
+  packages = [
+    "stepconf",
+    "tools",
+  ]
+  pruneopts = ""
+  revision = "f540824d77dfd382ce84fd0ee0a9da2fba1cce0a"
 
 [[projects]]
   branch = "master"
+  digest = "1:b4ad615ff82ea776f48f3892dab3fbe82622fec97cf6708d745d53714c488da7"
+  name = "github.com/bitrise-io/go-utils"
+  packages = [
+    "colorstring",
+    "command",
+    "errorutil",
+    "fileutil",
+    "log",
+    "parseutil",
+    "pathutil",
+    "pointers",
+  ]
+  pruneopts = ""
+  revision = "3aa93c2266790b9bc3c7002b21eb95c28782cb10"
+
+[[projects]]
+  branch = "master"
+  digest = "1:510cb6dddad542f24598cbb8dd8bc4dd0ff460284d459d118c9d475334e2a337"
+  name = "github.com/bitrise-tools/go-steputils"
+  packages = ["cache"]
+  pruneopts = ""
+  revision = "f540824d77dfd382ce84fd0ee0a9da2fba1cce0a"
+
+[[projects]]
+  branch = "master"
+  digest = "1:63e7368fcf6b54804076eaec26fd9cf0c4466166b272393db4b93102e1e962df"
   name = "github.com/kballard/go-shellquote"
   packages = ["."]
-  revision = "cd60e84ee657ff3dc51de0b4f55dd299a3e136f2"
+  pruneopts = ""
+  revision = "95032a82bc518f77982ea72343cc1ade730072f0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1fe477a5442a76bbedaf2cf7252d8478409a0308453251eb6306fc9ade3ea80a"
+  input-imports = [
+    "github.com/bitrise-io/go-steputils/stepconf",
+    "github.com/bitrise-io/go-utils/command",
+    "github.com/bitrise-io/go-utils/fileutil",
+    "github.com/bitrise-io/go-utils/log",
+    "github.com/bitrise-tools/go-steputils/cache",
+    "github.com/kballard/go-shellquote",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
