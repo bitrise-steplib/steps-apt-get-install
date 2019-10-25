@@ -139,13 +139,13 @@ func disablePackageCache() error {
 }
 
 func removeDownloadedPackages() error {
-	return command.RemoveDir("/var/cache/apt/archives/")
+	return command.RemoveAll("/var/cache/apt/archives/")
 }
 
 func removeLookupFiles() error {
-	return command.RemoveFile("/var/cache/apt/pkgcache.bin", "/var/cache/apt/pkgcache.bin")
+	return command.RemoveAll("/var/cache/apt/pkgcache.bin", "/var/cache/apt/pkgcache.bin")
 }
 
 func removeDockerCleanFile() error {
-	return command.RemoveFile("/etc/apt/apt.conf.d/docker-clean")
+	return command.RemoveAll("/etc/apt/apt.conf.d/docker-clean")
 }
