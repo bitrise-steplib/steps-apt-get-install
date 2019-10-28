@@ -143,7 +143,7 @@ func removeDownloadedPackages() error {
 }
 
 func removeLookupFiles() error {
-	return command.RemoveAll("/var/cache/apt/pkgcache.bin", "/var/cache/apt/pkgcache.bin")
+	return command.RemoveAll("/var/cache/apt/pkgcache.bin", "/var/cache/apt/srcpkgcache.bin")
 }
 
 func removeDockerCleanFile() error {
