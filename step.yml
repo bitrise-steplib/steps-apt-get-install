@@ -56,7 +56,7 @@ inputs:
   - cache_level: "all"
     opts:
       category: Options
-      title: "Set the level of cache"
+      title: "Cache level"
       summary:  "Sets the level of cache"
       is_required: true
       description: |-

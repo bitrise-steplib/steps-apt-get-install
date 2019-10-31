@@ -12,12 +12,7 @@ import (
 	"github.com/kballard/go-shellquote"
 )
 
-const (
-	cacheInputAll = "all"
-)
-
-// configsModel ...
-type configsModel struct {
+type config struct {
 	Packages   string `env:"packages,required"`
 	Options    string `env:"options"`
 	Upgrade    string `env:"upgrade,opt[yes,no]"`
@@ -30,7 +25,7 @@ func fail(format string, v ...interface{}) {
 }
 
 func main() {
-	var configs configsModel
+	var configs config
 	if err := stepconf.Parse(&configs); err != nil {
 		fail("Issue with input: %s", err)
 	}
@@ -72,7 +67,7 @@ func main() {
 }
 
 func applyCacheConfig(cacheConfig string) error {
-	if cacheConfig == cacheInputAll {
+	if cacheConfig == "all" {
 		return applyAllCache()
 	}
 	return nil
