@@ -1,81 +1,117 @@
-format_version: 4
+format_version: 9
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
-
-app:
-  envs:
-  - BITRISE_STEP_ID: apt-get-install
-  - BITRISE_STEP_VERSION: "0.9.0"
-  - BITRISE_STEP_GIT_CLONE_URL: https://github.com/bitrise-steplib/steps-apt-get-install.git
-  - MY_STEPLIB_REPO_FORK_GIT_URL: $MY_STEPLIB_REPO_FORK_GIT_URL
 
 workflows:
   test:
     steps:
-    - change-workdir:
-        title: Switch working dir to test / _tmp dir
-        description: |-
-          To prevent step testing issues, like referencing relative
-          files with just './some-file' in the step's code, which would
-          work for testing the step from this directory directly
-          but would break if the step is included in another `bitrise.yml`.
-        run_if: true
-        inputs:
-        - path: ./_tmp
-        - is_create_path: true
-    - path::./:
-        title: Step Test
-        run_if: true
-        inputs:
-        - packages: nginx
-        - options: "-V"
-        - upgrade: "yes"
-  # ----------------------------------------------------------------
-  # --- workflows to Share this step into a Step Library
-  audit-this-step:
+      - script:
+          inputs:
+            - content: stepman audit --step-yml ./step.yml
+      - go-list:
+      - golint:
+      - errcheck:
+      - go-test:
+    after_run:
+      - _common
+      - _clear_cache
+      - _test_with_cache
+      - _clear_cache
+      - _test_with_no_cache
+
+  _common:
     steps:
-    - script:
-        inputs:
-        - content: |-
-            #!/bin/bash
-            set -ex
-            stepman audit --step-yml ./step.yml
+      - change-workdir:
+          title: Switch working dir to test / _tmp dir
+          description: |-
+            To prevent step testing issues, like referencing relative
+            files with just './some-file' in the step's code, which would
+            work for testing the step from this directory directly
+            but would break if the step is included in another `bitrise.yml`.
+          run_if: true
+          inputs:
+            - path: ./_tmp
+            - is_create_path: true
 
-  share-this-step:
-    envs:
-      # if you want to share this step into a StepLib
-      - MY_STEPLIB_REPO_FORK_GIT_URL: $MY_STEPLIB_REPO_FORK_GIT_URL
-      - BITRISE_STEP_ID: $BITRISE_STEP_ID
-      - BITRISE_STEP_VERSION: $BITRISE_STEP_VERSION
-      - BITRISE_STEP_GIT_CLONE_URL: $BITRISE_STEP_GIT_CLONE_URL
-    description: |-
-      If this is the first time you try to share a Step you should
-      first call: $ bitrise share
-
-      This will print you a guide, and information about how Step sharing
-      works. Please read it at least once!
-
-      As noted in the Step sharing guide you'll have to fork the
-      StepLib you want to share this step into. Once you're done with forking
-      the repository you should set your own fork's git clone URL
-      in the `.bitrise.secrets.yml` file, or here in the `envs` section,
-      as the value of the `MY_STEPLIB_REPO_FORK_GIT_URL` environment.
-
-      You're now ready to share this Step, just make sure that
-      the `BITRISE_STEP_ID` and `BITRISE_STEP_VERSION`
-      environments are set to the desired values!
-
-      To share this Step into a StepLib you can just run: $ bitrise run share-this-step
-
-      Once it finishes the only thing left is to actually create a Pull Request,
-      the way described in the guide printed at the end of the process.
-    before_run:
-    - audit-this-step
+  _clear_cache:
     steps:
-    - script:
-        inputs:
-        - content: |-
-            #!/bin/bash
-            set -ex
-            bitrise share start -c "${MY_STEPLIB_REPO_FORK_GIT_URL}"
-            bitrise share create --stepid "${BITRISE_STEP_ID}" --tag "${BITRISE_STEP_VERSION}" --git "${BITRISE_STEP_GIT_CLONE_URL}"
-            bitrise share finish
+      - script:
+          title: Clear cache Env variable
+          inputs:
+            - content: |-
+                #!/bin/bash
+                envman add --key "BITRISE_CACHE_INCLUDE_PATHS" --value ""
+
+  _test_with_cache:
+    steps:
+      - script:
+          title: Step Test with Cache preverify
+          inputs:
+            - content: |-
+                #!/bin/bash
+                set -e
+
+                FILE=/etc/apt/apt.conf.d/docker-clean
+                if [ -f "$FILE" ]; then
+                    echo "$FILE exist"
+                else
+                    echo "$FILE does not exist, but it should"
+                    exit 1
+                fi
+      - path::./:
+          title: Step Test with Cache
+          run_if: true
+          inputs:
+            - packages: nginx
+            - options: "-V"
+            - upgrade: "yes"
+      - script:
+          title: Step Test with Cache postverify
+          inputs:
+            - content: |-
+                #!/bin/bash
+                set -e
+
+                FILE="/etc/apt/apt.conf.d/docker-clean"
+                if [ -f "$FILE" ]; then
+                    echo "$FILE exist, but it should have been deleted"
+                    exit 1
+                fi
+
+                echo "Exported cache dir is $BITRISE_CACHE_INCLUDE_PATHS"
+                DIR="/var/cache/apt/archives"
+                if [ $BITRISE_CACHE_INCLUDE_PATHS == $DIR ]; then
+                   echo "Cache dir found correctly"
+                else
+                   echo "Did not found cache dir correctly"
+                   exit 1
+                fi
+
+  _test_with_no_cache:
+    steps:
+      - path::./:
+          title: Step Test with no Cache
+          run_if: true
+          inputs:
+            - packages: nginx
+            - options: "-V"
+            - upgrade: "yes"
+            - cache_level: "none"
+      - script:
+          title: Step Test with no Cache postverify
+          inputs:
+            - content: |-
+                #!/bin/bash
+                set -e
+
+                FILE="/var/cache/apt/archives/"
+                if [ -f "$FILE" ]; then
+                  echo "$FILE exist, but it should have been deleted"
+                  exit 1
+                fi
+
+                if [ -z $BITRISE_CACHE_INCLUDE_PATHS ]; then
+                   echo "Cache paths are empty"
+                else
+                   echo "Cache paths are not empty, but they should"
+                   exit 1
+                fi

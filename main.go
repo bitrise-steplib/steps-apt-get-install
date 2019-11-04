@@ -1,67 +1,51 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"strings"
 
+	"github.com/bitrise-io/go-steputils/stepconf"
 	"github.com/bitrise-io/go-utils/command"
 	"github.com/bitrise-io/go-utils/log"
+	"github.com/bitrise-tools/go-steputils/cache"
 	"github.com/kballard/go-shellquote"
 )
 
-// ConfigsModel ...
-type ConfigsModel struct {
-	Packages string
-	Options  string
-	Upgrade  string
+type config struct {
+	Packages   string `env:"packages,required"`
+	Options    string `env:"options"`
+	Upgrade    string `env:"upgrade,opt[yes,no]"`
+	CacheLevel string `env:"cache_level,opt[all,none]"`
 }
 
-func createConfigsModelFromEnvs() ConfigsModel {
-	return ConfigsModel{
-		Packages: os.Getenv("packages"),
-		Options:  os.Getenv("options"),
-		Upgrade:  os.Getenv("upgrade"),
-	}
-}
-
-func (configs ConfigsModel) print() {
-	log.Infof("Configs:")
-	log.Printf("- Packages: %s", configs.Packages)
-	log.Printf("- Options: %s", configs.Options)
-	log.Printf("- Upgrade: %s", configs.Upgrade)
-}
-
-func (configs ConfigsModel) validate() error {
-	if configs.Packages == "" {
-		return errors.New("no Packages parameter specified")
-	}
-	if configs.Upgrade != "" && configs.Upgrade != "yes" && configs.Upgrade != "no" {
-		return fmt.Errorf("invalid 'Upgrade' specified (%s), valid options: [yes no]", configs.Upgrade)
-	}
-	return nil
+func fail(format string, v ...interface{}) {
+	log.Errorf(format, v...)
+	os.Exit(1)
 }
 
 func main() {
-	configs := createConfigsModelFromEnvs()
+	var configs config
+	if err := stepconf.Parse(&configs); err != nil {
+		fail("Issue with input: %s", err)
+	}
 
 	fmt.Println()
-	configs.print()
+	stepconf.Print(configs)
 	fmt.Println()
 
-	if err := configs.validate(); err != nil {
-		log.Errorf("Issue with input: %s", err)
-		os.Exit(1)
+	if configs.CacheLevel == "all" {
+		if err := applyAllCache(); err != nil {
+			fail("Could not apply caching: %s", err)
+		}
 	}
 
 	log.Infof("$ apt-get %s", command.PrintableCommandArgs(false, []string{"update"}))
 	if err := command.RunCommand("apt-get", "update"); err != nil {
-		log.Errorf("Can't perform apt-get update: %s", err)
-		os.Exit(1)
+		fail("Can't perform apt-get update: %s", err)
 	}
 
-	cmdArgs := []string{}
+	var cmdArgs []string
 	if configs.Upgrade == "yes" {
 		cmdArgs = append(cmdArgs, "upgrade", "-y")
 	} else {
@@ -70,8 +54,7 @@ func main() {
 	if configs.Options != "" {
 		args, err := shellquote.Split(configs.Options)
 		if err != nil {
-			log.Errorf("Can't split options: %s", err)
-			os.Exit(1)
+			fail("Can't split options: %s", err)
 		}
 		cmdArgs = append(cmdArgs, args...)
 	}
@@ -81,7 +64,22 @@ func main() {
 	fmt.Println()
 	log.Infof("$ apt-get %s", command.PrintableCommandArgs(false, cmdArgs))
 	if err := command.RunCommand("apt-get", cmdArgs...); err != nil {
-		log.Errorf("Can't install packages:  %s", err)
-		os.Exit(1)
+		fail("Can't install packages:  %s", err)
 	}
+}
+
+func applyAllCache() error {
+	if err := removeDockerCleanFile(); err != nil {
+		return fmt.Errorf("could not remove docker clean file: %s", err)
+	}
+	c := cache.New()
+	c.IncludePath("/var/cache/apt/archives")
+	if err := c.Commit(); err != nil {
+		return fmt.Errorf("could not add packages to cache: %s", err)
+	}
+	return nil
+}
+
+func removeDockerCleanFile() error {
+	return command.RemoveAll("/etc/apt/apt.conf.d/docker-clean")
 }

@@ -53,3 +53,17 @@ inputs:
       value_options:
         - "yes"
         - "no"
+  - cache_level: "all"
+    opts:
+      category: Options
+      title: "Cache level"
+      summary:  "Sets the level of cache"
+      is_required: true
+      description: |-
+        Sets the level of cache.
+
+        'all' enables the caching of all files under /var/cache/apt/archives folder (default directory for apt cache).
+        'none' disables the caching for the step.
+      value_options:
+          - "all"
+          - "none"
