@@ -34,8 +34,10 @@ func main() {
 	stepconf.Print(configs)
 	fmt.Println()
 
-	if err := applyCacheConfig(configs.CacheLevel); err != nil {
-		fail("Could not apply caching: %s", err)
+	if configs.CacheLevel == "all" {
+		if err := applyAllCache(); err != nil {
+			fail("Could not apply caching: %s", err)
+		}
 	}
 
 	log.Infof("$ apt-get %s", command.PrintableCommandArgs(false, []string{"update"}))
@@ -64,13 +66,6 @@ func main() {
 	if err := command.RunCommand("apt-get", cmdArgs...); err != nil {
 		fail("Can't install packages:  %s", err)
 	}
-}
-
-func applyCacheConfig(cacheConfig string) error {
-	if cacheConfig == "all" {
-		return applyAllCache()
-	}
-	return nil
 }
 
 func applyAllCache() error {
