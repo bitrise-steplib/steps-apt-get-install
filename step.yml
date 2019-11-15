@@ -45,7 +45,7 @@ inputs:
       title: "Upgrade packages if previously installed"
       summary: "Upgrade packages if previously installed"
       description: |
-        If set to `y`, the step will upgrade the defined packages by calling `apt-get upgrade -y [options] [packages]` command.
+        If set to `"yes"`, the step will upgrade the defined packages by calling `apt-get upgrade -y [options] [packages]` command.
 
         Otherwise the step calls `apt-get install -y [options] [packages]`
       is_expand: true
