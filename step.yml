@@ -1,9 +1,23 @@
-title: |-
-  apt-get install
-summary: |
-  Install or upgrade packages with apt-get
-description: |
-  Install or upgrade packages with apt-get
+title: "apt-get install"
+summary: |-
+  Install or upgrade packages with apt-get.
+
+description: |-
+  [This Step](https://www.bitrise.io/integrations/steps/apt-get-install) integrates with the Advanced Package Tool (APT) command line tool to install and upgrade packages.
+
+  ### Configuring the Step
+  1. Add the **Name of the packages to install/upgrade, separated with spaces**.
+  2. Add flags to pass on to the `apt-get` command in the **Options for apt-get install/upgrade** input.
+  3. Allow upgrades to previously installed packages with the **Upgrade packages if previously installed** input.
+  Under **Options**:
+  4. Set the level of cache in the **Cache level** input.
+
+  ### Useful links
+  - [Installing any additional tools](https://devcenter.bitrise.io/tips-and-tricks/install-additional-tools/#apt-get-on-linux)
+
+  ### Related Steps
+  - [Brew Install](https://www.bitrise.io/integrations/steps/brew-install)
+  - [Flutter Install](https://www.bitrise.io/integrations/steps/flutter-installer)
 website: https://github.com/bitrise-steplib/steps-apt-get-install
 source_code_url: https://github.com/bitrise-steplib/steps-apt-get-install
 support_url: https://github.com/bitrise-steplib/steps-apt-get-install/issues
