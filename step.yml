@@ -1,6 +1,6 @@
 title: "apt-get install"
 summary: |-
-  Install or upgrade packages with apt-get.
+  Install or upgrade packages on Ubuntu with apt-get.
 
 description: |-
   [This Step](https://www.bitrise.io/integrations/steps/apt-get-install) integrates with the Advanced Package Tool (APT) command line tool to install and upgrade packages.
