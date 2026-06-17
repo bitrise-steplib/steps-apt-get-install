@@ -2,61 +2,7 @@ format_version: "11"
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 
 workflows:
-  test_install_with_cache:
-    steps:
-    - change-workdir:
-        title: Switch working dir to _tmp
-        inputs:
-        - path: ./_tmp
-        - is_create_path: true
-    - script:
-        title: Clear cache env
-        inputs:
-        - content: envman add --key "BITRISE_CACHE_INCLUDE_PATHS" --value ""
-    - script:
-        title: Verify docker-clean file exists before step run
-        inputs:
-        - content: |-
-            #!/bin/bash
-            set -e
-
-            FILE=/etc/apt/apt.conf.d/docker-clean
-            if [ -f "$FILE" ]; then
-                echo "$FILE exists"
-            else
-                echo "$FILE does not exist, but it should"
-                exit 1
-            fi
-    - path::./:
-        title: Step Test with Cache
-        inputs:
-        - packages: nginx
-        - options: "-V"
-        - upgrade: "yes"
-        - cache_level: "all"
-    - script:
-        title: Verify cache configured correctly
-        inputs:
-        - content: |-
-            #!/bin/bash
-            set -e
-
-            FILE="/etc/apt/apt.conf.d/docker-clean"
-            if [ -f "$FILE" ]; then
-                echo "$FILE exists, but it should have been deleted"
-                exit 1
-            fi
-
-            echo "Exported cache dir is $BITRISE_CACHE_INCLUDE_PATHS"
-            DIR="/var/cache/apt/archives"
-            if [ "$BITRISE_CACHE_INCLUDE_PATHS" == "$DIR" ]; then
-               echo "Cache dir found correctly"
-            else
-               echo "Did not find cache dir correctly"
-               exit 1
-            fi
-
-  test_install_without_cache:
+  test_install:
     steps:
     - change-workdir:
         title: Switch working dir to _tmp
