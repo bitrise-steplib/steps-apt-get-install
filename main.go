@@ -41,7 +41,7 @@ func main() {
 	}
 
 	log.Infof("$ apt-get %s", command.PrintableCommandArgs(false, []string{"update"}))
-	if err := command.RunCommand("apt-get", "update"); err != nil {
+	if err := command.RunCommand("sudo", "apt-get", "update"); err != nil {
 		fail("Can't perform apt-get update: %s", err)
 	}
 
@@ -63,7 +63,7 @@ func main() {
 
 	fmt.Println()
 	log.Infof("$ apt-get %s", command.PrintableCommandArgs(false, cmdArgs))
-	if err := command.RunCommand("apt-get", cmdArgs...); err != nil {
+	if err := command.RunCommand("sudo", "apt-get", cmdArgs...); err != nil {
 		fail("Can't install packages:  %s", err)
 	}
 }
