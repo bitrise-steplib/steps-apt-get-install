@@ -21,11 +21,8 @@ description: |-
 website: https://github.com/bitrise-steplib/steps-apt-get-install
 source_code_url: https://github.com/bitrise-steplib/steps-apt-get-install
 support_url: https://github.com/bitrise-steplib/steps-apt-get-install/issues
-host_os_tags:
-  - ubuntu
 type_tags:
-  - installer
-is_requires_admin_user: true
+- installer
 is_always_run: false
 is_skippable: false
 run_if: ""
@@ -35,49 +32,47 @@ toolkit:
     package_name: github.com/bitrise-steplib/steps-apt-get-install
 
 inputs:
-  - packages:
-    opts:
-      title: "Name of the packages to install/upgrade, separated with spaces"
-      summary: "Name of the packages to install/upgrade, separated with spaces"
-      description: "Name of the packages to install/upgrade, separated with spaces"
-      is_expand: true
-      is_required: true
-      value_options: []
-  - options:
-    opts:
-      title: "Options for apt-get install/upgrade"
-      summary:  "Options for apt-get install/upgrade"
-      description: |
-        Flags to pass to the `apt-get install/upgrade` command.
+- packages:
+  opts:
+    title: "Name of the packages to install/upgrade, separated with spaces"
+    summary: "Name of the packages to install/upgrade, separated with spaces"
+    description: "Name of the packages to install/upgrade, separated with spaces"
+    is_expand: true
+    is_required: true
+- options:
+  opts:
+    title: "Options for apt-get install/upgrade"
+    summary: "Options for apt-get install/upgrade"
+    description: |
+      Flags to pass to the `apt-get install/upgrade` command.
 
-        `apt-get install/upgrade -y [options] [packages]`
-      is_expand: true
-      is_required: false
-      value_options: []
-  - upgrade: "yes"
-    opts:
-      title: "Upgrade packages if previously installed"
-      summary: "Upgrade packages if previously installed"
-      description: |
-        If set to `"yes"`, the step will upgrade the defined packages by calling `apt-get upgrade -y [options] [packages]` command.
+      `apt-get install/upgrade -y [options] [packages]`
+    is_expand: true
+    is_required: false
+- upgrade: "yes"
+  opts:
+    title: "Upgrade packages if previously installed"
+    summary: "Upgrade packages if previously installed"
+    description: |
+      If set to `"yes"`, the step will upgrade the defined packages by calling `apt-get upgrade -y [options] [packages]` command.
 
-        Otherwise the step calls `apt-get install -y [options] [packages]`
-      is_expand: true
-      is_required: false
-      value_options:
-        - "yes"
-        - "no"
-  - cache_level: "all"
-    opts:
-      category: Options
-      title: "Cache level"
-      summary:  "Sets the level of cache"
-      is_required: true
-      description: |-
-        Sets the level of cache.
+      Otherwise the step calls `apt-get install -y [options] [packages]`
+    is_expand: true
+    is_required: false
+    value_options:
+    - "yes"
+    - "no"
+- cache_level: "all"
+  opts:
+    category: Options
+    title: "Cache level"
+    summary: "Sets the level of cache"
+    is_required: true
+    description: |-
+      Sets the level of cache.
 
-        'all' enables the caching of all files under /var/cache/apt/archives folder (default directory for apt cache).
-        'none' disables the caching for the step.
-      value_options:
-          - "all"
-          - "none"
+      'all' enables the caching of all files under /var/cache/apt/archives folder (default directory for apt cache).
+      'none' disables the caching for the step.
+    value_options:
+    - "all"
+    - "none"
