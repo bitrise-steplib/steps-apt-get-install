@@ -41,15 +41,15 @@ func main() {
 	}
 
 	log.Infof("$ apt-get %s", command.PrintableCommandArgs(false, []string{"update"}))
-	if err := command.RunCommand("apt-get", "update"); err != nil {
+	if err := command.RunCommand("sudo", "apt-get", "update"); err != nil {
 		fail("Can't perform apt-get update: %s", err)
 	}
 
 	var cmdArgs []string
 	if configs.Upgrade == "yes" {
-		cmdArgs = append(cmdArgs, "upgrade", "-y")
+		cmdArgs = append(cmdArgs, "apt-get", "upgrade", "-y")
 	} else {
-		cmdArgs = append(cmdArgs, "install", "-y")
+		cmdArgs = append(cmdArgs, "apt-get", "install", "-y")
 	}
 	if configs.Options != "" {
 		args, err := shellquote.Split(configs.Options)
@@ -63,7 +63,7 @@ func main() {
 
 	fmt.Println()
 	log.Infof("$ apt-get %s", command.PrintableCommandArgs(false, cmdArgs))
-	if err := command.RunCommand("apt-get", cmdArgs...); err != nil {
+	if err := command.RunCommand("sudo", cmdArgs...); err != nil {
 		fail("Can't install packages:  %s", err)
 	}
 }

@@ -16,7 +16,7 @@ workflows:
     - path::./:
         title: Step Test with no Cache
         inputs:
-        - packages: nginx
+        - packages: nginx nginx-common
         - options: "-V"
         - upgrade: "yes"
         - cache_level: "none"
