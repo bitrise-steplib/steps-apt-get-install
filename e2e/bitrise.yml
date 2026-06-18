@@ -1,0 +1,35 @@
+format_version: "11"
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+
+workflows:
+  test_install:
+    steps:
+    - change-workdir:
+        title: Switch working dir to _tmp
+        inputs:
+        - path: ./_tmp
+        - is_create_path: true
+    - script:
+        title: Clear cache env
+        inputs:
+        - content: envman add --key "BITRISE_CACHE_INCLUDE_PATHS" --value ""
+    - path::./:
+        title: Step Test with no Cache
+        inputs:
+        - packages: nginx
+        - options: "-V"
+        - upgrade: "yes"
+        - cache_level: "none"
+    - script:
+        title: Verify no cache dirs exported
+        inputs:
+        - content: |-
+            #!/bin/bash
+            set -e
+
+            if [ -z "$BITRISE_CACHE_INCLUDE_PATHS" ]; then
+               echo "Cache paths are empty, as expected"
+            else
+               echo "Cache paths are not empty, but they should be"
+               exit 1
+            fi

@@ -8,7 +8,7 @@ import (
 	"github.com/bitrise-io/go-steputils/stepconf"
 	"github.com/bitrise-io/go-utils/command"
 	"github.com/bitrise-io/go-utils/log"
-	"github.com/bitrise-tools/go-steputils/cache"
+	"github.com/bitrise-io/go-steputils/cache"
 	"github.com/kballard/go-shellquote"
 )
 
